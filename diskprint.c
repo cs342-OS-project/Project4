@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <string.h>
 
 #define FILE_NAME_SIZE 64
@@ -25,6 +27,6 @@ int main(int argc, char const *argv[])
     } 
 
     printf("Disk opened\n");
-    
+
     return 0;
 }
