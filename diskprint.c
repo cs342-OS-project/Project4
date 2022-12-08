@@ -10,8 +10,8 @@
 
 int main(int argc, char const *argv[])
 {
-    char devname[FILE_NAME_SIZE];  
-    int fd; 
+    char devname[FILE_NAME_SIZE];
+    int fd;
     int n; 
     off_t offset; 
     int blocknum;  
@@ -30,23 +30,28 @@ int main(int argc, char const *argv[])
     // SUPER BLOCK
     printf("Super Block Information\n");
 
-    lseek(fd, SUPERBLOCK_OFFSET, SEEK_SET);
+    offset = 0;
+
+    lseek(fd, offset * BLOCK_SIZE, SEEK_SET);
 
     n = read(fd, buffer, BLOCK_SIZE);
 
     if (n == BLOCK_SIZE) 
     {
-        unsigned char number[4];
-        for (int i = 4; i < 8; i++)
-        {
-            number[i - 4] = buffer[i];
-            printf("%d\n", number[i - 4]);
-        }
-        printf("%d\n", convert_block(number, 4));
+        printf("1) s_blocks_count --> %d\n", retrieve_field(buffer, 0 + SUPERBLOCK_START_POS, 4));
+        printf("2) s_blocks_count --> %d\n", retrieve_field(buffer, 4 + SUPERBLOCK_START_POS, 4));
+        printf("3) s_r_blocks_count --> %d\n", retrieve_field(buffer, 8 + SUPERBLOCK_START_POS, 4));
+        printf("4) s_free_blocks_count --> %d\n", retrieve_field(buffer, 12 + SUPERBLOCK_START_POS, 4));
+        printf("5) s_inodes_count --> %d\n", retrieve_field(buffer, 16 + SUPERBLOCK_START_POS, 4));
+        printf("6) s_first_data_block --> %d\n", retrieve_field(buffer, 20 + SUPERBLOCK_START_POS, 4));
+        printf("7) s_log_block_size --> %d\n", retrieve_field(buffer, 24 + SUPERBLOCK_START_POS, 4));
+        printf("8) s_log_frag_size --> %d\n", retrieve_field(buffer, 28 + SUPERBLOCK_START_POS, 4));
+        printf("9) s_block_per_group --> %d\n", retrieve_field(buffer, 32 + SUPERBLOCK_START_POS, 4));
+        printf("10) s_frags_per_group --> %d\n", retrieve_field(buffer, 36 + SUPERBLOCK_START_POS, 4));
     }
     else
     {
-        printf("Error\n");
+        printf("Error reading on block %ld\n", offset);
     }
 
     return 0;

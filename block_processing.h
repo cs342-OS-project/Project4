@@ -5,12 +5,16 @@
 
 #define BLOCK_SIZE 4096
 #define SUPERBLOCK_START_POS 1024
+#define BYTE 8
+#define INT_SIZE 32
 
 int binary_to_decimal(char binary[], int len, int i);
 
 char *decimal_to_binary(int decimal, int binary_length);
 
-int convert_block(unsigned char[], int size );
+int convert_region(unsigned char region[], int size );
+
+int retrieve_field(unsigned char buffer[BLOCK_SIZE], int offset, int size);
 
 // Implementation
 
@@ -28,11 +32,10 @@ int binary_to_decimal(char binary[], int len, int i)
 
 char *decimal_to_binary(int decimal, int binary_length)
 {
-    int binaryNum[32];
+    int binaryNum[INT_SIZE];
 
     char *binary = malloc(binary_length);
-  
-    // counter for binary array
+
     int i = 0;
     while (decimal > 0) 
     {
@@ -56,13 +59,13 @@ char *decimal_to_binary(int decimal, int binary_length)
     return binary;   
 }
 
-int convert_block(unsigned char block[], int size )
+int convert_region(unsigned char region[], int size )
 {
     char **binaries = malloc(sizeof(char *) * size);
 
     for (int i = 0; i < size; i++)
     {
-        binaries[i] = decimal_to_binary(block[size - i - 1], 8);
+        binaries[i] = decimal_to_binary(region[size - i - 1], BYTE);
     }
 
     char binary[32];
@@ -70,21 +73,17 @@ int convert_block(unsigned char block[], int size )
     int k = 0;
     int l = 0;
 
-    for (int i = 0; i < 32; i++)
+    for (int i = 0; i < INT_SIZE; i++)
     {
         binary[i] = binaries[k][l];
 
-        l = (l + 1) % 8;
+        l = (l + 1) % BYTE;
 
         if (l == 0)
             k++;
     }
 
-    for (int i = 0; i < 32; i++)
-        printf("%c", binary[i]);
-    printf("\n");
-
-    int decimal = binary_to_decimal(binary, 32, 0);
+    int decimal = binary_to_decimal(binary, INT_SIZE, 0);
     
     for (int i = 0; i < size; i++)
     {
@@ -94,6 +93,19 @@ int convert_block(unsigned char block[], int size )
     free(binaries);
 
     return decimal;
+}
+
+int retrieve_field(unsigned char buffer[BLOCK_SIZE], int offset, int size)
+{
+    unsigned char *field = malloc(sizeof(unsigned char) * size);
+    for (int i = offset; i < offset + size; i++)
+    {
+        field[i - offset] = buffer[i];
+    }
+
+    int field_num =  convert_region(field, size);
+    free(field);
+    return field_num;
 }
 
 #endif
