@@ -30,9 +30,10 @@ int main(int argc, char const *argv[])
     // SUPER BLOCK
     printf("Super Block Information\n");
 
-    offset = 0;
+    blocknum = 0;
+    offset = blocknum * BLOCK_SIZE;
 
-    lseek(fd, offset * BLOCK_SIZE, SEEK_SET);
+    lseek(fd, offset, SEEK_SET);
 
     n = read(fd, buffer, BLOCK_SIZE);
 
@@ -53,6 +54,38 @@ int main(int argc, char const *argv[])
     {
         printf("Error reading on block %ld\n", offset);
     }
+
+    int inode_size = retrieve_field(buffer, 88 + SUPERBLOCK_START_POS, 2);
+
+    // ROOT DIRECTORY
+
+    printf("Root Directory Information\n");
+
+    blocknum = 1; // Group Descriptor Table
+    offset = blocknum * BLOCK_SIZE;
+
+    lseek(fd, offset, SEEK_SET);
+
+    n = read(fd, buffer, BLOCK_SIZE);
+
+    int first_inode_table = retrieve_field(buffer, 8, 4); // block id of the first block of the “inode table” for the group represented.
+
+    blocknum = first_inode_table;
+    offset = blocknum * BLOCK_SIZE;
+
+    lseek(fd, offset, SEEK_SET);
+
+    n = read(fd, buffer, BLOCK_SIZE);
+
+    printf("%d\n", first_inode_table);
+
+    printf("%d\n", retrieve_field(buffer, inode_size, 4));
+
+
+
+    // int first_ino = retrieve_field(buffer, 84 + SUPERBLOCK_START_POS, 4);
+    // int inode_size = retrieve_field(buffer, 88 + SUPERBLOCK_START_POS, 2);
+    // printf("%d %d\n", first_ino, inode_size);
 
     return 0;
 }

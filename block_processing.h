@@ -68,12 +68,12 @@ int convert_region(unsigned char region[], int size )
         binaries[i] = decimal_to_binary(region[size - i - 1], BYTE);
     }
 
-    char binary[32];
+    char binary[size * BYTE];
 
     int k = 0;
     int l = 0;
 
-    for (int i = 0; i < INT_SIZE; i++)
+    for (int i = 0; i < size * BYTE; i++)
     {
         binary[i] = binaries[k][l];
 
@@ -83,7 +83,7 @@ int convert_region(unsigned char region[], int size )
             k++;
     }
 
-    int decimal = binary_to_decimal(binary, INT_SIZE, 0);
+    int decimal = binary_to_decimal(binary, size * BYTE, 0);
     
     for (int i = 0; i < size; i++)
     {
