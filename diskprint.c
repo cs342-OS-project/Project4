@@ -49,7 +49,7 @@ int main(int argc, char const *argv[])
         printf("7) s_log_block_size --> %d\n", retrieve_field(buffer, 24 + SUPERBLOCK_START_POS, 4));
         printf("8) s_log_frag_size --> %d\n", retrieve_field(buffer, 28 + SUPERBLOCK_START_POS, 4));
         printf("9) s_block_per_group --> %d\n", retrieve_field(buffer, 32 + SUPERBLOCK_START_POS, 4));
-        printf("10) s_frags_per_group --> %d\n", retrieve_field(buffer, 36 + SUPERBLOCK_START_POS, 4));
+        printf("10) s_frags_per_group --> %d\n\n", retrieve_field(buffer, 36 + SUPERBLOCK_START_POS, 4));
     }
     else
     {
@@ -81,8 +81,6 @@ int main(int argc, char const *argv[])
     int root_file_length = retrieve_field(buffer, 4, 4);
     int root_first_data_block = retrieve_field(buffer, 40, 4);
 
-    printf("%d %d\n", root_first_data_block, root_file_length);
-
     blocknum = root_first_data_block;
     offset = root_first_data_block * BLOCK_SIZE;
 
@@ -106,22 +104,34 @@ int main(int argc, char const *argv[])
 
         printf("File %d name --> %s\n", i, file_name);
 
+        int inode_number = retrieve_field(buffer, offset, 4);
+
+        unsigned char inode_buffer[BLOCK_SIZE];
+
+        lseek(fd, first_inode_table * BLOCK_SIZE + (inode_number - 1) * inode_size, SEEK_SET);
+        n = read(fd, inode_buffer, BLOCK_SIZE);
+
+        if (strcmp(file_name, ".") != 0 && strcmp(file_name, "..") != 0)
+        {
+            printf("Inode Information of file %s\n", file_name);
+
+            printf("1) i_mode --> %d\n", retrieve_field(inode_buffer, 0, 2));
+            printf("2) i_uid --> %d\n", retrieve_field(inode_buffer, 2, 2));
+            printf("3) i_size --> %d\n", retrieve_field(inode_buffer, 4, 4));
+            printf("4) i_atime --> %d\n", retrieve_field(inode_buffer, 8, 4));
+            printf("5) i_ctime --> %d\n", retrieve_field(inode_buffer, 12, 4));
+            printf("6) i_mtime --> %d\n", retrieve_field(inode_buffer, 16, 4));
+            printf("7) i_dtime --> %d\n", retrieve_field(inode_buffer, 20, 4));
+            printf("8) i_gid --> %d\n", retrieve_field(inode_buffer, 24, 4));
+            printf("9) i_links_count --> %d\n", retrieve_field(inode_buffer, 26, 2));
+            printf("10) i_blocks --> %d\n\n", retrieve_field(inode_buffer, 28, 4));
+        }
+
         free(file_name);
 
         offset = offset + rec_len;
         i++;
     }
-
-    // int ino_number = retrieve_field(buffer, 0, 4);
-    // int file_type = retrieve_field(buffer, 7, 1);
-    // int file_name_length = retrieve_field(buffer, 6, 1);
-
-    // printf("%d %d %d\n", ino_number, file_type, file_name_length);
-
-    // char *file_name = retrieve_field_str(buffer, 8, file_name_length + 1);
-    // printf("%s\n", file_name);
-
-    // free(file_name);
 
     return 0;
 }
