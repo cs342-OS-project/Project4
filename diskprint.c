@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
 
     if (n == BLOCK_SIZE) 
     {
-        printf("1) s_blocks_count --> %d\n", retrieve_field(buffer, 0 + SUPERBLOCK_START_POS, 4));
+        printf("1) s_inodes_count --> %d\n", retrieve_field(buffer, 0 + SUPERBLOCK_START_POS, 4));
         printf("2) s_blocks_count --> %d\n", retrieve_field(buffer, 4 + SUPERBLOCK_START_POS, 4));
         printf("3) s_r_blocks_count --> %d\n", retrieve_field(buffer, 8 + SUPERBLOCK_START_POS, 4));
         printf("4) s_free_blocks_count --> %d\n", retrieve_field(buffer, 12 + SUPERBLOCK_START_POS, 4));
