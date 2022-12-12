@@ -7,6 +7,7 @@
 #include "block_processing.h"
 
 #define FILE_NAME_SIZE 64
+#define ROOT_INO 2
 
 int main(int argc, char const *argv[])
 {
@@ -71,21 +72,28 @@ int main(int argc, char const *argv[])
     int first_inode_table = retrieve_field(buffer, 8, 4); // block id of the first block of the “inode table” for the group represented.
 
     blocknum = first_inode_table;
-    offset = blocknum * BLOCK_SIZE;
+    offset = blocknum * BLOCK_SIZE + (ROOT_INO - 1) * inode_size;
 
     lseek(fd, offset, SEEK_SET);
 
     n = read(fd, buffer, BLOCK_SIZE);
 
-    printf("%d\n", first_inode_table);
+    int root_file_length = retrieve_field(buffer, 4, 4);
+    int root_first_data_block = retrieve_field(buffer, 40, 4);
 
-    printf("%d\n", retrieve_field(buffer, inode_size, 4));
+    printf("%d %d\n", root_first_data_block, root_file_length);
 
+    blocknum = root_first_data_block;
+    offset = root_first_data_block * BLOCK_SIZE;
 
+    lseek(fd, offset, SEEK_SET);
 
-    // int first_ino = retrieve_field(buffer, 84 + SUPERBLOCK_START_POS, 4);
-    // int inode_size = retrieve_field(buffer, 88 + SUPERBLOCK_START_POS, 2);
-    // printf("%d %d\n", first_ino, inode_size);
+    n = read(fd, buffer, BLOCK_SIZE);
+
+    int ino_number = retrieve_field(buffer, 0, 4);
+    int file_type = retrieve_field(buffer, 7, 1);
+
+    printf("%d %d\n", ino_number, file_type);
 
     return 0;
 }
