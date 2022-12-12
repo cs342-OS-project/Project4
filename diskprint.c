@@ -90,10 +90,38 @@ int main(int argc, char const *argv[])
 
     n = read(fd, buffer, BLOCK_SIZE);
 
-    int ino_number = retrieve_field(buffer, 0, 4);
-    int file_type = retrieve_field(buffer, 7, 1);
+    offset = 0;
+    int i = 1;
 
-    printf("%d %d\n", ino_number, file_type);
+    while (1)
+    {
+        int rec_len = retrieve_field(buffer, offset + 4, 2);
+
+        int file_name_length = retrieve_field(buffer, offset + 6, 1);
+
+        if (file_name_length == 0)
+            break;
+
+        char *file_name =  retrieve_field_str(buffer, offset + 8, file_name_length + 1);
+
+        printf("File %d name --> %s\n", i, file_name);
+
+        free(file_name);
+
+        offset = offset + rec_len;
+        i++;
+    }
+
+    // int ino_number = retrieve_field(buffer, 0, 4);
+    // int file_type = retrieve_field(buffer, 7, 1);
+    // int file_name_length = retrieve_field(buffer, 6, 1);
+
+    // printf("%d %d %d\n", ino_number, file_type, file_name_length);
+
+    // char *file_name = retrieve_field_str(buffer, 8, file_name_length + 1);
+    // printf("%s\n", file_name);
+
+    // free(file_name);
 
     return 0;
 }

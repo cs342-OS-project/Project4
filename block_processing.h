@@ -16,6 +16,8 @@ int convert_region(unsigned char region[], int size );
 
 int retrieve_field(unsigned char buffer[BLOCK_SIZE], int offset, int size);
 
+char *retrieve_field_str(unsigned char buffer[BLOCK_SIZE], int offset, int size);
+
 // Implementation
 
 int binary_to_decimal(char binary[], int len, int i)
@@ -106,6 +108,16 @@ int retrieve_field(unsigned char buffer[BLOCK_SIZE], int offset, int size)
     int field_num =  convert_region(field, size);
     free(field);
     return field_num;
+}
+
+char *retrieve_field_str(unsigned char buffer[BLOCK_SIZE], int offset, int size)
+{
+    unsigned char *field = malloc(sizeof(unsigned char) * size);
+    for (int i = offset; i < offset + size; i++)
+    {
+        field[i - offset] = buffer[i];
+    }
+    return field;
 }
 
 #endif
