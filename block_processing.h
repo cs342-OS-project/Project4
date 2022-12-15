@@ -117,6 +117,7 @@ char *retrieve_field_str(unsigned char buffer[BLOCK_SIZE], int offset, int size)
     {
         field[i - offset] = buffer[i];
     }
+    field[size - 1] = '\0';
     return field;
 }
 

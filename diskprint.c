@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
+#include <time.h>
 
 #include "block_processing.h"
 
@@ -18,15 +19,19 @@ int main(int argc, char const *argv[])
     int blocknum;  
     unsigned char buffer[BLOCK_SIZE];
 
+    struct timeval time1, time2;
+
     strcpy(devname, argv[1]);
 
-    fd = open (devname, O_RDONLY);
+    fd = open(devname, O_RDONLY);
 
     if (fd < 0) 
     { 
-        printf ("can not open disk file\n");
+        printf("can not open disk file\n");
         exit(1);
-    } 
+    }
+
+    gettimeofday(&time1, NULL); // START TIMER
 
     // SUPER BLOCK
     printf("Super Block Information\n");
@@ -132,6 +137,10 @@ int main(int argc, char const *argv[])
         offset = offset + rec_len;
         i++;
     }
+
+    gettimeofday(&time2, NULL); // STOP TIMER
+
+    printf("Total time = %ld miliseconds\n", (time2.tv_usec - time1.tv_usec) );
 
     return 0;
 }
