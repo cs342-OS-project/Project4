@@ -116,21 +116,18 @@ int main(int argc, char const *argv[])
         lseek(fd, first_inode_table * BLOCK_SIZE + (inode_number - 1) * inode_size, SEEK_SET);
         n = read(fd, inode_buffer, BLOCK_SIZE);
 
-        if (strcmp(file_name, ".") != 0 && strcmp(file_name, "..") != 0)
-        {
-            printf("Inode Information of file %s\n", file_name);
+        printf("Inode Information of file %s\n", file_name);
 
-            printf("1) i_mode --> %d\n", retrieve_field(inode_buffer, 0, 2));
-            printf("2) i_uid --> %d\n", retrieve_field(inode_buffer, 2, 2));
-            printf("3) i_size --> %d\n", retrieve_field(inode_buffer, 4, 4));
-            printf("4) i_atime --> %d\n", retrieve_field(inode_buffer, 8, 4));
-            printf("5) i_ctime --> %d\n", retrieve_field(inode_buffer, 12, 4));
-            printf("6) i_mtime --> %d\n", retrieve_field(inode_buffer, 16, 4));
-            printf("7) i_dtime --> %d\n", retrieve_field(inode_buffer, 20, 4));
-            printf("8) i_gid --> %d\n", retrieve_field(inode_buffer, 24, 4));
-            printf("9) i_links_count --> %d\n", retrieve_field(inode_buffer, 26, 2));
-            printf("10) i_blocks --> %d\n\n", retrieve_field(inode_buffer, 28, 4));
-        }
+        printf("1) i_mode --> %d\n", retrieve_field(inode_buffer, 0, 2));
+        printf("2) i_uid --> %d\n", retrieve_field(inode_buffer, 2, 2));
+        printf("3) i_size --> %d\n", retrieve_field(inode_buffer, 4, 4));
+        printf("4) i_atime --> %d\n", retrieve_field(inode_buffer, 8, 4));
+        printf("5) i_ctime --> %d\n", retrieve_field(inode_buffer, 12, 4));
+        printf("6) i_mtime --> %d\n", retrieve_field(inode_buffer, 16, 4));
+        printf("7) i_dtime --> %d\n", retrieve_field(inode_buffer, 20, 4));
+        printf("8) i_gid --> %d\n", retrieve_field(inode_buffer, 24, 4));
+        printf("9) i_links_count --> %d\n", retrieve_field(inode_buffer, 26, 2));
+        printf("10) i_blocks --> %d\n\n", retrieve_field(inode_buffer, 28, 4));
 
         free(file_name);
 
